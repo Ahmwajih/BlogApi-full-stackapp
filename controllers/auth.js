@@ -2,12 +2,14 @@ const User = require('../models/users');
 const Token = require('../models/token');
 const pwEncrypt = require('../helpers/pwEncrypt');
 const jwt = require('jsonwebtoken');
-const token = require('./token')
+const token = require('./token');
+const setToken = require('./token');
+require('dotenv').config();
 
 require('dotenv').config();
 
 module.exports = {
-    login: (req, res) => {
+    login: async (req, res) => {
         //swagger tags
         /**
          * @swagger
@@ -42,8 +44,109 @@ module.exports = {
                     error: false,
                     message: 'Login success',
                     token: token,
+                    jswbtoken: setToken(user),
                     email: user.email,
                     password: user.password
                 })
+            } else {
+                res.send({
+                    error: true,
+                    message: 'Wrong password'
+                })
             }
+        } else {
+            res.send({
+                error: true,
+                message: 'User not found'
+            })
+        } 
+    },
+
+    refreshToken: async (req, res) => {
+        //swagger tags
+        /**
+         * @swagger
+         * /auth/refreshToken:
+         *  post:
+         *    tags:
+         *      - Auth
+         *    summary: Refresh Token
+         *    description: Refresh Token
+         *    requestBody:
+         *      required: true
+         *      content:
+         *        application/json:
+         *          schema:
+         *            type: object
+         *            properties:
+         *              token:
+         *                type: string
+         *    responses:
+         *      '200':
+         *        description: A successful response
+         */
+        const refreshToken = req.body?.bearer.refresh
+        if (refreshToken) {
+            await jwt.verify(refreshToken, process.env.JWT_SECRET, (err, user) => {
+                if (err) {
+                    res.send({
+                        error: true,
+                        message: 'Invalid token'
+                    })
+                } else {
+                    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+                    res.send({
+                        error: false,
+                        message: 'Token refreshed',
+                        token: token
+                    })
+                }
+            })  
+        } else {
+            res.send({
+                error: true,
+                message: 'Token not found'
+            })
         }
+    },
+
+
+    logout: async (req, res) => {
+        //swagger tags
+        /**
+         * @swagger
+         * /auth/logout:
+         *  post:
+         *    tags:
+         *      - Auth
+         *    summary: Logout
+         *    description: Logout
+         *    responses:
+         *      '200':
+         *        description: A successful response
+         */
+      const auth = req.headers?.authorization || null;
+      const tokenkey = auth ? auth.split(' ') : null;
+
+      if (tokenkey && tokenkey[1]) {
+        await Token.findOneAndDelete({ token: tokenkey[1] }, (err, data) => {
+          if (err) {
+            res.send({
+              error: true,
+              message: 'Logout failed'
+            })
+          } else {
+            res.send({
+              error: false,
+              message: 'Logout success'
+            })
+          }
+        })
+      } else {
+        res.send({
+          error: true,
+          message: 'Token not found'
+        })
+      }
+    }
+    }

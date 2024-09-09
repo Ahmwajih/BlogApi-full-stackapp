@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const pwEncrypt = require('../helpers/pwEncrypt');
 
 const userSchema = new mongoose.Schema({
     first_name: { 
@@ -29,7 +30,8 @@ const userSchema = new mongoose.Schema({
         trim: true,
         validate: {
             validator: function(v) {
-                return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(v);
+            return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(v);
+                
             },
             message: props => `${props.value} is not a valid password`
         },
@@ -48,3 +50,7 @@ const userSchema = new mongoose.Schema({
 
 
 const User = mongoose.model('User', userSchema);
+
+module.exports = User;
+
+
