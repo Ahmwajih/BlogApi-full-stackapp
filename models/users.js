@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         validate: {
             validator: function(v) {
-                return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(v);
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
             },
             message: props => `${props.value} is not a valid email address`
         }
@@ -30,27 +30,34 @@ const userSchema = new mongoose.Schema({
         trim: true,
         validate: {
             validator: function(v) {
-            return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(v);
-                
+                return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(v);
             },
             message: props => `${props.value} is not a valid password`
-        },
-        set: function(pw) {
-            return pwEncrypt(pw);
         }
     },
     profile: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile'
-    }},
-    {
-        timestamps: true,
-        collection: 'users'
-    });
+    }
+}, {
+    timestamps: true,
+    collection: 'users'
+});
 
+// Pre-save hook to encrypt the password before saving
+userSchema.pre('save', function(next) {
+    if (this.isModified('password') || this.isNew) {
+        try {
+            this.password = pwEncrypt(this.password);
+            next();
+        } catch (err) {
+            next(err);
+        }
+    } else {
+        next();
+    }
+});
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
-
-

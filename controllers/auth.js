@@ -2,10 +2,7 @@ const User = require('../models/users');
 const Token = require('../models/token');
 const pwEncrypt = require('../helpers/pwEncrypt');
 const jwt = require('jsonwebtoken');
-const token = require('./token');
-const setToken = require('./token');
-require('dotenv').config();
-
+const setToken = require('../helpers/setToken');
 require('dotenv').config();
 
 module.exports = {
@@ -34,32 +31,38 @@ module.exports = {
          *      '200':
          *        description: A successful response
          */
-        const { email, password } = req.body
+        const { email, password } = req.body;
 
-        const user = await User.findOne({ $or: [{ email: email }] })
-        if (user && password) {
-            if (user && user.password == pwEncrypt(password)) {
-                const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
-                res.send({
-                    error: false,
-                    message: 'Login success',
-                    token: token,
-                    jswbtoken: setToken(user),
-                    email: user.email,
-                    password: user.password
-                })
+        try {
+            const user = await User.findOne({ email: email });
+            if (user && password) {
+                if (user.password === pwEncrypt(password)) {
+                    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                    res.status(200).send({
+                        error: false,
+                        message: 'Login success',
+                        token: token,
+                        jswbtoken: setToken(user),
+                        email: user.email
+                    });
+                } else {
+                    res.status(401).send({
+                        error: true,
+                        message: 'Wrong password'
+                    });
+                }
             } else {
-                res.send({
+                res.status(404).send({
                     error: true,
-                    message: 'Wrong password'
-                })
+                    message: 'User not found'
+                });
             }
-        } else {
-            res.send({
+        } catch (error) {
+            res.status(500).send({
                 error: true,
-                message: 'User not found'
-            })
-        } 
+                message: 'Internal server error'
+            });
+        }
     },
 
     refreshToken: async (req, res) => {
@@ -85,31 +88,31 @@ module.exports = {
          *      '200':
          *        description: A successful response
          */
-        const refreshToken = req.body?.bearer.refresh
+        const { token: refreshToken } = req.body;
+
         if (refreshToken) {
-            await jwt.verify(refreshToken, process.env.JWT_SECRET, (err, user) => {
+            jwt.verify(refreshToken, process.env.JWT_SECRET, (err, user) => {
                 if (err) {
-                    res.send({
+                    res.status(401).send({
                         error: true,
                         message: 'Invalid token'
-                    })
+                    });
                 } else {
-                    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
-                    res.send({
+                    const newToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                    res.status(200).send({
                         error: false,
                         message: 'Token refreshed',
-                        token: token
-                    })
+                        token: newToken
+                    });
                 }
-            })  
+            });
         } else {
-            res.send({
+            res.status(400).send({
                 error: true,
                 message: 'Token not found'
-            })
+            });
         }
     },
-
 
     logout: async (req, res) => {
         //swagger tags
@@ -125,28 +128,27 @@ module.exports = {
          *      '200':
          *        description: A successful response
          */
-      const auth = req.headers?.authorization || null;
-      const tokenkey = auth ? auth.split(' ') : null;
+        const auth = req.headers?.authorization || null;
+        const tokenkey = auth ? auth.split(' ') : null;
 
-      if (tokenkey && tokenkey[1]) {
-        await Token.findOneAndDelete({ token: tokenkey[1] }, (err, data) => {
-          if (err) {
-            res.send({
-              error: true,
-              message: 'Logout failed'
-            })
-          } else {
-            res.send({
-              error: false,
-              message: 'Logout success'
-            })
-          }
-        })
-      } else {
-        res.send({
-          error: true,
-          message: 'Token not found'
-        })
-      }
+        if (tokenkey && tokenkey[1]) {
+            try {
+                await Token.findOneAndDelete({ token: tokenkey[1] });
+                res.status(200).send({
+                    error: false,
+                    message: 'Logout success'
+                });
+            } catch (err) {
+                res.status(500).send({
+                    error: true,
+                    message: 'Logout failed'
+                });
+            }
+        } else {
+            res.status(400).send({
+                error: true,
+                message: 'Token not found'
+            });
+        }
     }
-    }
+};
