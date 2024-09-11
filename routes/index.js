@@ -1,21 +1,19 @@
 const router = require('express').Router();
 
-const  auth = require('../controllers/auth');
-const users = require('../controllers/users');
-const blog = require('../controllers/blog');
-const comment = require('../controllers/comment');
-const PostViewRecord = require('../controllers/postViewRecords');
-const like = require('../controllers/like');
+const auth = require('./auth');
+const users = require('./users');
+const blog = require('./blog');
+const comment = require('./comment');
+const postViewRecord = require('./postViewRecords'); 
+const like = require('./like');
+const category = require('./categories');
 
-
-router.use('/auth', require('./auth'));
-router.use('/user', require('./users'));
-router.use('/blog', require('./blog'));
-// router.use('/comment', require('./comment'));
-router.use('/postViewRecord', require('./postViewRecord'));
-router.use('/like', require('./like'));
-
-
-
+router.use('/auth', auth);
+router.use('/user', users);
+router.use('/blog', blog);
+router.use('/comment', comment);
+router.use('/postViewRecord', postViewRecord); 
+router.use('/like', like);
+router.use('/category', category);
 
 module.exports = router;

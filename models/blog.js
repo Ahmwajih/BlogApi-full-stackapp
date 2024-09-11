@@ -47,3 +47,15 @@ const blogSchema = new mongoose.Schema({
     
 
 const Blog = mongoose.model('Blog', blogSchema);
+
+// blog test with postman 
+// {
+//     "title": "Test blog",
+//     "content": "This is a test blog",
+//     "image": "test.jpg",
+//     "slug": "test-blog",
+//     "status": "draft",
+//     "category": "5f8b5f5e3b5b5b1d4c6e2c7e",
+//     "author": "5f8b5f5e3b5b5b1d4c6e2c7e"
+// }
+

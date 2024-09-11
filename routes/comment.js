@@ -1,16 +1,17 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 
-const comment = require('../controllers/comment');
-
+const Comment = require('../controllers/comment');
 
 router.route('/')
-    .get(comment.list)
-    .post(comment.create);
+    .get(Comment.list)
+    .post(Comment.create);
 
 router.route('/:id')
-    .get(comment.read)
-    .put(comment.update)
-    .delete(comment.delete);
+    .get(Comment.read)
+    .put(Comment.update)
+    .delete(Comment.delete);
+
+
 
 module.exports = router;
-

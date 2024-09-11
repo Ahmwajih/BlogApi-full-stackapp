@@ -20,3 +20,12 @@ const profileSchema = new Schema({
 });
 
 const Profile = mongoose.model('Profile', profileSchema);
+
+
+// blog test with postman 
+
+// {
+//     "image": "image.jpg",
+//     "address": "test address",
+//     "user": "5f8b5f5e3b5b5b1d4c6e2c7e"
+// }

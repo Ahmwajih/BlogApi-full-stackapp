@@ -14,3 +14,9 @@ const categorySchema = new mongoose.Schema({
     });
 
 const Category = mongoose.model('Category', categorySchema);
+
+// blog test with postman 
+
+// {
+//     "name": "Test category"
+// }
