@@ -12,3 +12,4 @@
 ::1 - - [11/Sep/2024:19:05:26 +0000] "POST /auth/login HTTP/1.1" 500 629 "-" "PostmanRuntime/7.41.2"
 ::1 - - [11/Sep/2024:19:07:10 +0000] "POST /auth/login HTTP/1.1" 200 1048 "-" "PostmanRuntime/7.41.2"
 ::1 - - [11/Sep/2024:20:17:54 +0000] "GET /category HTTP/1.1" 500 1510 "-" "PostmanRuntime/7.41.2"
+::1 - - [11/Sep/2024:20:18:03 +0000] "POST /category HTTP/1.1" 500 1509 "-" "PostmanRuntime/7.41.2"
