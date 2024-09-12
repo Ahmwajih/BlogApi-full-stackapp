@@ -21,6 +21,8 @@ const profileSchema = new Schema({
 
 const Profile = mongoose.model('Profile', profileSchema);
 
+module.exports = Profile;
+
 
 // blog test with postman 
 

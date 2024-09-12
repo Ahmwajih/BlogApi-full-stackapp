@@ -6,14 +6,14 @@ const categorySchema = new mongoose.Schema({
         required: true,
         trim: true
     }
-    },
-
-    {
-        timestamps: true,
-        collection: 'categories'
-    });
+}, {
+    timestamps: true,
+    collection: 'categories'
+});
 
 const Category = mongoose.model('Category', categorySchema);
+
+module.exports = Category;
 
 // blog test with postman 
 

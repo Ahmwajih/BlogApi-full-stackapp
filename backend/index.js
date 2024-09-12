@@ -4,6 +4,7 @@ const app = express();
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || 'localhost'
 
 const dbConnection = require('./configs/dbConnection');
 dbConnection();
@@ -21,6 +22,6 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Server is running on http://${HOST}:${PORT}`);
 });

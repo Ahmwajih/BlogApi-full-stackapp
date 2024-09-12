@@ -20,3 +20,5 @@ const postViewRecordSchema = new mongoose.Schema({
     });
 
 const PostViewRecord = mongoose.model('PostViewRecord', postViewRecordSchema);
+
+module.exports = PostViewRecord;

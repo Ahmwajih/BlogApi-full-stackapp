@@ -133,7 +133,7 @@ module.exports = {
 
         if (tokenkey && tokenkey[1]) {
             try {
-                await Token.findOneAndDelete({ token: tokenkey[1] });
+                // Here, we assume the client will handle token removal
                 res.status(200).send({
                     error: false,
                     message: 'Logout success'

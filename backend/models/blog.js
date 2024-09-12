@@ -39,14 +39,16 @@ const blogSchema = new mongoose.Schema({
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'}},
-    {
-        timestamps: true,
-        collection: 'blogs'
-    });
-    
+        ref: 'User'
+    }
+}, {
+    timestamps: true,
+    collection: 'blogs'
+});
 
 const Blog = mongoose.model('Blog', blogSchema);
+
+module.exports = Blog;
 
 // blog test with postman 
 // {

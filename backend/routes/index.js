@@ -11,7 +11,7 @@ const category = require('./categories');
 router.use('/auth', auth);
 router.use('/user', users);
 router.use('/blog', blog);
-router.use('/comment', comment);
+router.use('/comments', comment);
 router.use('/postViewRecord', postViewRecord); 
 router.use('/like', like);
 router.use('/category', category);
